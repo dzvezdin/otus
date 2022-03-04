@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-app-deployment
+  namespace: otus
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service-app
+  template:
+    metadata:
+      labels:
+        app: service-app
+    spec:
+      containers:
+        - name: service-app
+          image: dzvezdin/otus_service_app_hw_l5:linux_v1
+          ports:
+            - name: web-port
+              containerPort: 8000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              port: web-port
+              path: /
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+          readinessProbe:
+            httpGet:
+              port: web-port
+              path: /health
+            initialDelaySeconds: 10
+            periodSeconds: 5
